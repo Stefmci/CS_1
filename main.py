@@ -28,6 +28,3 @@ st.number_input(label="Wartungskosten in Euro",
 st.number_input(label="Wartungskosten in Dollar", 
                             key = "price_dollar",
                             on_change=update_price_from_dollar)
-
-#streamlit run main.py
-#streamlit python -m streamlit run main.py
