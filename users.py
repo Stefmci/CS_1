@@ -2,6 +2,7 @@ from tinydb import Query, TinyDB
 from database import Database
 from serializer import serializer
 import os
+import streamlit as st
 
 class User:
     db_connector = TinyDB(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.json'), storage=serializer).table('users')

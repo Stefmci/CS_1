@@ -1,21 +1,7 @@
 import streamlit as st
 from queries import find_devices
 from devices import Device
-
-# Eine Überschrift der ersten Ebene
-st.write("# Geräte-Verwaltung")
-
-# Eine Überschrift der zweiten Ebene
-st.write("## Geräteauswahl")
-
-# Eine Überschrift der zweiten Ebene
-st.write("## Nutzer-Verwaltung")
-
-# Eine Überschrift der zweiten Ebene
-st.write("## Reservierungssystem")
-
-# Eine Überschrift der zweiten Ebene
-st.write("## Wartungsmanagement")
+from datetime import datetime, timedelta
 
 
 # Eine Auswahlbox mit Datenbankabfrage, das Ergebnis wird in current_device gespeichert
@@ -50,6 +36,52 @@ if devices_in_db:
 else:
     st.write("No devices found.")
     st.stop()
+    
+def generate_next_two_weeks():
+    today = datetime.today()
+    next_two_weeks = [(today + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(14)]
+    return next_two_weeks
+
+dates = generate_next_two_weeks()
 
 st.write("Session State:")
 st.session_state
+
+
+def Reservierung():
+    st.title("Reservierung")
+    st.write("Hie können Sie ein Gerät reservieren")
+    st.selectbox("Gerät auswählen", ["Laserschneider", "3D-Drucker", "CNC-Fräse", "Schweißgerät", "Lötkolben", "Oszilloskop", "Multimeter", "Netzteil", "Funktionsgenerator"])
+    st.selectbox("Datum auswählen", [ui.dates()] )
+
+def benutzerverwaltung():
+    st.title("Benutzerverwaltung")
+    st.write("Hier kannst du Benutzer hinzufügen oder verwalten.")
+    st.header("Benutzerliste:")
+    
+    st.header("Benutzer hinzufügen")
+    user_id = st.text_input("Benutzer-ID")
+    user_name = st.text_input("Benutzername")
+    if st.button("Benutzer speichern"):
+        st.success(f"Benutzer {user_name} mit ID {user_id} wurde hinzugefügt!")
+
+def geraeteverwaltung():
+    st.title("Geräteverwaltung")
+    st.write("Hier kannst du Geräte hinzufügen oder verwalten.")
+    
+    st.header("Gerät hinzufügen")
+    device_id = st.text_input("Geräte-ID")
+    device_name = st.text_input("Gerätename")
+    if st.button("Gerät speichern"):
+        st.success(f"Gerät {device_name} mit ID {device_id} wurde hinzugefügt!")
+        
+def geraetewartung():
+    st.title("Wartungs-Management")
+    st.write("Hier kannst du Geräte hinzufügen oder verwalten.")
+    st.header("Geräte anpassen")
+    
+    st.header("Gerät hinzufügen")
+    device_id = st.text_input("Geräte-ID")
+    device_name = st.text_input("Gerätename")
+    if st.button("Gerät speichern"):
+        st.success(f"Gerät {device_name} mit ID {device_id} wurde hinzugefügt!")
