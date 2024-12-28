@@ -37,10 +37,28 @@ options = {
 }
 
 #Tabelle auf Startseite
-data = {
+data_startseite = {
     "Gerät": ["CNC-Fräse", "Lötstation", "Laserschneider"],
     "bis einschließlich nicht verfügbar": ["25.01.2025", "30.01.2025", "22.01.2025"],
     "Bemerkung": ["Wartungsarbeiten", "Wartungsarbeiten", "Wartungsarbeiten"],
 }
+df_startseite = pd.DataFrame(data_startseite)
 
-df = pd.DataFrame(data)
+
+#Tabelle für Nutzer
+data_nutzer = {
+    "Auswahl": [False] * 3,
+    "Name": ["Max A", "Max B", "Max C"],
+    "E-Mail": ["test@test.com", "test@test.com", "test@test.com"],
+}
+df_nutzer = pd.DataFrame(data_nutzer)
+
+#Tabelle für Geräte
+data_wartung = {
+    "Auswahl": [False] * 3,
+    "Gerät": ["CNC-Fräse", "Lötstation", "Laserschneider"],
+    "ID": ["1234", "1234", "1234"],
+    "Wartungstermin": ["25.05.2025", "25.05.2025", "25.05.2025"],
+    "Wartungskosten": ["250€", "250€", "250€"],
+}
+df_wartung = pd.DataFrame(data_wartung)

@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
 from streamlit_calendar import calendar
-import buchungen as bu
+import general_data as bu
 
 
 def startseite():
@@ -14,13 +14,12 @@ def startseite():
     st.divider()
     st.title("Wartungsarbeiten")
     st.write("Folgende Geräte sind nicht verfügbar.")
-    st.table(bu.df)
+    st.table(bu.df_startseite)
     st.divider()
     st.write("Bei Fragen oder Problemen wenden Sie sich bitte an den Administrator.")
     
 def Reservierung():
     st.title("Reservierung")
-    st.write("Hie können Sie ein Gerät reservieren")
     st.selectbox("Gerät auswählen", ["Laserschneider", "3D-Drucker", "CNC-Fräse", "Schweißgerät", "Lötkolben", "Oszilloskop", "Multimeter", "Netzteil", "Funktionsgenerator"])
     st.selectbox("Wähle ein Datum:", generate_next_two_weeks())
     st.button("Gerät reservieren")
@@ -29,9 +28,13 @@ def Reservierung():
     
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
-    st.write("Hier kannst du Nutzer hinzufügen oder verwalten.")
     st.header("Nutzerliste:")
-    
+    st.table(bu.df_nutzer)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("Benutzer ändern")
+    with col2:
+        st.button("Benutzer löschen")
     st.header("Nutzer hinzufügen")
     user_name = st.text_input("Benutzername")
     user_email = st.text_input("E-Mail Adresse")
@@ -88,9 +91,11 @@ def geraeteverwaltung():
         
 def geraetewartung():
     st.title("Wartungs-Management")
-    st.write("Hier kannst du Geräte hinzufügen oder verwalten.")
-    st.header("Geräte anpassen")
-    
+    st.header("Wartungsplan")
+    calendar(events=bu.events, options=bu.options, key="static_calendar")
+    st.header("Wartungsliste")
+    st.table(bu.df_wartung)
+    st.button("Anpassen")
     st.header("Gerät hinzufügen")
     device_id = st.text_input("Geräte-ID")
     device_name = st.text_input("Gerätename")
