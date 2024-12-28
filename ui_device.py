@@ -3,10 +3,20 @@ from queries import find_devices
 from devices import Device
 
 # Eine Überschrift der ersten Ebene
-st.write("# Gerätemanagement")
+st.write("# Geräte-Verwaltung")
 
 # Eine Überschrift der zweiten Ebene
 st.write("## Geräteauswahl")
+
+# Eine Überschrift der zweiten Ebene
+st.write("## Nutzer-Verwaltung")
+
+# Eine Überschrift der zweiten Ebene
+st.write("## Reservierungssystem")
+
+# Eine Überschrift der zweiten Ebene
+st.write("## Wartungsmanagement")
+
 
 # Eine Auswahlbox mit Datenbankabfrage, das Ergebnis wird in current_device gespeichert
 devices_in_db = find_devices()

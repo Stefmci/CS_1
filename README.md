@@ -21,5 +21,5 @@
 
 ## Run Programm
 
--run main.py
--python -m streamlit run main.py
+- run main.py
+- python -m streamlit run main.py
