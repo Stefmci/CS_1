@@ -4,7 +4,7 @@ import userinterface as ui
 
 
 st.sidebar.title("Navigation")
-auswahl = st.sidebar.radio("Seite auswählen", ["Startseite", "Reservierung", "Benutzerverwaltung", "Geräteverwaltung", "Wartungs-Management"])
+auswahl = st.sidebar.radio("", ["Startseite", "Reservierung", "Benutzerverwaltung", "Geräteverwaltung", "Wartungs-Management"])
 
 if auswahl == "Reservierung":
     ui.Reservierung()

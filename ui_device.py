@@ -1,8 +1,6 @@
 import streamlit as st
 from queries import find_devices
 from devices import Device
-from datetime import datetime, timedelta
-
 
 # Eine Auswahlbox mit Datenbankabfrage, das Ergebnis wird in current_device gespeichert
 devices_in_db = find_devices()
@@ -36,13 +34,6 @@ if devices_in_db:
 else:
     st.write("No devices found.")
     st.stop()
-    
-def generate_next_two_weeks():
-    today = datetime.today()
-    next_two_weeks = [(today + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(14)]
-    return next_two_weeks
-
-dates = generate_next_two_weeks()
 
 st.write("Session State:")
 st.session_state
