@@ -18,15 +18,15 @@ def Reservierung():
     st.selectbox("Datum auswählen", [ui.dates()] )
 
 def benutzerverwaltung():
-    st.title("Benutzerverwaltung")
-    st.write("Hier kannst du Benutzer hinzufügen oder verwalten.")
-    st.header("Benutzerliste:")
+    st.title("Nutzerverwaltung")
+    st.write("Hier kannst du Nutzer hinzufügen oder verwalten.")
+    st.header("Nutzerliste:")
     
-    st.header("Benutzer hinzufügen")
-    user_id = st.text_input("Benutzer-ID")
+    st.header("Nutzer hinzufügen")
     user_name = st.text_input("Benutzername")
+    user_email = st.text_input("E-Mail Adresse")
     if st.button("Benutzer speichern"):
-        st.success(f"Benutzer {user_name} mit ID {user_id} wurde hinzugefügt!")
+        st.success(f"Benutzer {user_name} mit e-mail {user_email} wurde hinzugefügt!")
 
 def geraeteverwaltung():
     st.title("Geräteverwaltung")
