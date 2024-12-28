@@ -2,8 +2,8 @@ import streamlit as st
 
 def startseite():
     st.title("Willkommen ")
-    st.divider()
     st.header("bei der Geräteverwaltung der Hochschule")
+    st.divider()
     st.write("Am linken Rand befindet sich die Navigation, wo Sie zwischen den verschiedenen Seiten wechseln können.")
     st.title("News")
     st.write("Nächste Woche ist die CNC-Fräse nicht verfügbar.")
