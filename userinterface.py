@@ -40,13 +40,51 @@ def benutzerverwaltung():
 
 def geraeteverwaltung():
     st.title("Geräteverwaltung")
-    st.write("Hier kannst du Geräte hinzufügen oder verwalten.")
+
+    # Session State initialisieren
+    if "devices" not in st.session_state:
+        st.session_state["devices"] = []  # Liste der Geräte
+
+    st.title("Geräteverwaltung")
+
+    # Dropdown-Menü für Aktionen
+    option = st.selectbox(
+        "Wähle eine Aktion",
+        ["Gerät hinzufügen", "Geräte anzeigen", "Gerät bearbeiten"]
+    )
+
+    # Gerät hinzufügen
+    if option == "Gerät hinzufügen":
+        st.header("Gerät hinzufügen")
+        device_id = st.text_input("Geräte-ID", key="add_device_id")
+        device_name = st.text_input("Gerätename", key="add_device_name")
+
+        if st.button("Gerät speichern"):
+            if device_id and device_name:
+                # Gerät zur Session State-Liste hinzufügen
+                st.session_state["devices"].append({"ID": device_id, "Name": device_name})
+                st.success(f"Gerät '{device_name}' mit ID '{device_id}' wurde hinzugefügt!")
+            else:
+                st.error("Bitte sowohl Geräte-ID als auch Gerätename ausfüllen.")
+
+    # Geräte anzeigen
+    elif option == "Geräte anzeigen":
+        st.header("Geräte anzeigen")
+        if st.session_state["devices"]:
+            # Alle gespeicherten Geräte auflisten
+            for device in st.session_state["devices"]:
+                st.write(f"ID: {device['ID']}, Name: {device['Name']}")
+        else:
+            st.info("Es sind keine Geräte vorhanden.")
+
     
-    st.header("Gerät hinzufügen")
-    device_id = st.text_input("Geräte-ID")
-    device_name = st.text_input("Gerätename")
-    if st.button("Gerät speichern"):
-        st.success(f"Gerät {device_name} mit ID {device_id} wurde hinzugefügt!")
+    elif option == "Gerät bearbeiten":
+        st.header("Gerät bearbeiten")
+        st.write("Hier kannst du ein vorhandenes Gerät bearbeiten.")
+        # Beispiel für Bearbeitungslogik
+        device_id = st.text_input("Geräte-ID zum Bearbeiten")
+        if st.button("Gerät bearbeiten"):
+            st.info(f"Gerät mit ID {device_id} wurde zur Bearbeitung geöffnet.")
         
 def geraetewartung():
     st.title("Wartungs-Management")

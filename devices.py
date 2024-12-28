@@ -76,9 +76,6 @@ class Device():
         return devices
 
 
-
-    
-
 if __name__ == "__main__":
     # Create a device
     device1 = Device("Device1", "one@mci.edu")
