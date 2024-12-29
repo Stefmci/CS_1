@@ -58,7 +58,8 @@ data_wartung = {
     "Auswahl": [False] * 3,
     "Gerät": ["CNC-Fräse", "Lötstation", "Laserschneider"],
     "ID": ["1234", "1234", "1234"],
-    "Wartungstermin": ["25.05.2025", "25.05.2025", "25.05.2025"],
+    "Nächster Wartungstermin": ["25.05.2025", "25.05.2025", "25.05.2025"],
+    "Intervall in Tage": ["120", "100", "50"],
     "Wartungskosten": ["250€", "250€", "250€"],
 }
 df_wartung = pd.DataFrame(data_wartung)

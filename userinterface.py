@@ -95,7 +95,11 @@ def geraetewartung():
     calendar(events=bu.events, options=bu.options, key="static_calendar")
     st.header("Wartungsliste")
     st.table(bu.df_wartung)
-    st.button("Anpassen")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("Anpassen")
+    with col2:
+        st.button("Löschen")
     st.header("Gerät hinzufügen")
     device_id = st.text_input("Geräte-ID")
     device_name = st.text_input("Gerätename")
