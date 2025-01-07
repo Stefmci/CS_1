@@ -124,7 +124,7 @@ def geraeteverwaltung():
         if st.session_state["devices"]:
             # Alle gespeicherten Geräte aus der Datenbank anzeigen
             for device in st.session_state["devices"]:
-                st.write(f"ID: {device['ID']}, Name: {device['Name']}, Verantwortlicher: {device['Verantwortlicher']}")
+                st.write(f"ID: {device.device_name}, Verantwortlicher: {device.managed_by_user_id}")
         else:
             st.info("Es sind keine Geräte in der Datenbank gespeichert.")
 
