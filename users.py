@@ -42,13 +42,14 @@ class User:
     def __repr__(self):
         return self.__str__()
     
-    @staticmethod
+    @classmethod
     def find_all(cls) -> list:
         """Find all users in the database"""
         users = []
-        for user_data in User.db_connector.all():
-            users.append(User(user_data['id'], user_data['name']))
+        for user_data in cls.db_connector.all():
+            users.append(cls(user_data['id'], user_data['name']))
         return users
+
 
     @classmethod
     def find_by_attribute(cls, by_attribute : str, attribute_value : str, num_to_return=1) -> 'User':

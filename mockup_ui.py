@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 import general_data as bu
+import ui_device as ui
+import users as User
 
 
 def startseite():
@@ -28,18 +30,58 @@ def Reservierung():
     
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
+
+    # Anzeige der Benutzerliste
     st.header("Nutzerliste:")
-    st.table(bu.df_nutzer)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button("Benutzer ändern")
-    with col2:
-        st.button("Benutzer löschen")
+    try:
+        users = User.find_all()
+        if users:
+            st.dataframe(
+                [{"ID": user.id, "Name": user.name} for user in users],
+                use_container_width=True
+            )
+        else:
+            st.info("Keine Benutzer gefunden.")
+    except Exception as e:
+        st.error(f"Fehler beim Abrufen der Benutzerliste: {e}")
+
+    # Benutzer hinzufügen
     st.header("Nutzer hinzufügen")
+    user_id = st.text_input("Benutzer-ID")
     user_name = st.text_input("Benutzername")
-    user_email = st.text_input("E-Mail Adresse")
     if st.button("Benutzer speichern"):
-        st.success(f"Benutzer {user_name} mit e-mail {user_email} wurde hinzugefügt!")
+        if user_id and user_name:
+            try:
+                user = User(user_id, user_name)
+                existing_user = User.find_by_attribute("id", user_id)
+                if existing_user:
+                    st.warning(f"Benutzer mit ID {user_id} existiert bereits. Er wird aktualisiert.")
+                user.store_data()
+                st.success(f"Benutzer {user_name} (ID: {user_id}) wurde hinzugefügt/aktualisiert!")
+                st.experimental_rerun()  # Seite aktualisieren
+            except Exception as e:
+                st.error(f"Fehler beim Speichern des Benutzers: {e}")
+        else:
+            st.error("Bitte sowohl eine ID als auch einen Namen eingeben.")
+
+    # Benutzer löschen
+    st.header("Benutzer löschen")
+    del_user_id = st.text_input("ID des zu löschenden Benutzers")
+    if st.button("Benutzer löschen"):
+        if del_user_id:
+            try:
+                user = User(del_user_id, "")
+                if not User.find_by_attribute("id", del_user_id):
+                    st.warning(f"Benutzer mit ID {del_user_id} wurde nicht gefunden.")
+                else:
+                    user.delete()
+                    st.success(f"Benutzer mit ID {del_user_id} wurde gelöscht!")
+                    st.experimental_rerun()  # Seite aktualisieren
+            except Exception as e:
+                st.error(f"Fehler beim Löschen des Benutzers: {e}")
+        else:
+            st.error("Bitte eine Benutzer-ID eingeben.")
+
 
 def geraeteverwaltung():
     st.title("Geräteverwaltung")
@@ -76,7 +118,7 @@ def geraeteverwaltung():
         if st.session_state["devices"]:
             # Alle gespeicherten Geräte auflisten
             for device in st.session_state["devices"]:
-                st.write(f"ID: {device['ID']}, Name: {device['Name']}")
+                st.write(f"ID: {device['ID']}, Name: {device['Name']}, Verantwortlicher: {device['Verantwortlicher']}")
         else:
             st.info("Es sind keine Geräte vorhanden.")
 
