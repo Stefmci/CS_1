@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 import general_data as bu
+from devices import Device
 import ui_device as ui
 import users as User
 
@@ -88,9 +89,10 @@ def geraeteverwaltung():
 
     # Session State initialisieren
     if "devices" not in st.session_state:
-        st.session_state["devices"] = []  # Liste der Geräte
+        st.session_state["devices"] = []  # Liste der Geräte aus der Datenbank
 
-    st.title("Geräteverwaltung")
+    # Datenbank-Verbindung initialisieren und Geräte aus der Datenbank laden
+    st.session_state["devices"] = Device.find_all()
 
     # Dropdown-Menü für Aktionen
     option = st.selectbox(
@@ -101,35 +103,39 @@ def geraeteverwaltung():
     # Gerät hinzufügen
     if option == "Gerät hinzufügen":
         st.header("Gerät hinzufügen")
-        device_id = st.text_input("Geräte-ID", key="add_device_id")
         device_name = st.text_input("Gerätename", key="add_device_name")
+        managed_by_user_id = st.text_input("Verantwortlicher Benutzer (ID)", key="add_managed_by_user_id")
 
         if st.button("Gerät speichern"):
-            if device_id and device_name:
-                # Gerät zur Session State-Liste hinzufügen
-                st.session_state["devices"].append({"ID": device_id, "Name": device_name})
-                st.success(f"Gerät '{device_name}' mit ID '{device_id}' wurde hinzugefügt!")
+            if device_name and managed_by_user_id:
+                # Neues Gerät erstellen
+                new_device = Device(device_name=device_name, managed_by_user_id=managed_by_user_id)
+                
+                # Gerät in die Datenbank speichern
+                new_device.store_data()
+
+                st.success(f"Gerät '{device_name}' wurde in der Datenbank gespeichert!")
             else:
-                st.error("Bitte sowohl Geräte-ID als auch Gerätename ausfüllen.")
+                st.error("Bitte sowohl Gerätename als auch Benutzer-ID ausfüllen.")
 
     # Geräte anzeigen
     elif option == "Geräte anzeigen":
         st.header("Geräte anzeigen")
         if st.session_state["devices"]:
-            # Alle gespeicherten Geräte auflisten
+            # Alle gespeicherten Geräte aus der Datenbank anzeigen
             for device in st.session_state["devices"]:
                 st.write(f"ID: {device['ID']}, Name: {device['Name']}, Verantwortlicher: {device['Verantwortlicher']}")
         else:
-            st.info("Es sind keine Geräte vorhanden.")
+            st.info("Es sind keine Geräte in der Datenbank gespeichert.")
 
-    
     elif option == "Gerät bearbeiten":
         st.header("Gerät bearbeiten")
         st.write("Hier kannst du ein vorhandenes Gerät bearbeiten.")
         # Beispiel für Bearbeitungslogik
-        device_id = st.text_input("Geräte-ID zum Bearbeiten")
+        device_name = st.text_input("Gerätename zum Bearbeiten")
         if st.button("Gerät bearbeiten"):
-            st.info(f"Gerät mit ID {device_id} wurde zur Bearbeitung geöffnet.")
+            st.info(f"Gerät mit Name {device_name} wurde zur Bearbeitung geöffnet.")
+
         
 def geraetewartung():
     st.title("Wartungs-Management")
