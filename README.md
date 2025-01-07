@@ -31,5 +31,5 @@
 
 
 # Screenshot UI
-
-
+Hausübung vollständig abgegeben am 29.12.2024, Dateinamen korrigiert am 07.01.2025 nach Absprache mit Matthias.
+https://github.com/Stefmci/CS_1/blob/main/Screenshot_UI.png
