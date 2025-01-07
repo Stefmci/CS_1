@@ -19,10 +19,17 @@
 - The tests are located in the `tests` folder
 
 
+
+# before running the program, make sure you have installed the required packages in the requirements.txt file
+
+- pip install -r requirements.txt
+
 ## Run Programm
 
 - run main.py
 - python -m streamlit run main.py
 
+
+# Screenshot UI
 
 

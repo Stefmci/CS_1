@@ -1,5 +1,5 @@
 import streamlit as st
-import userinterface as ui
+import mockup_ui as ui
 
 
 st.sidebar.title("Navigation")
