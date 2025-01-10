@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 import general_data as bu
 from devices import Device
-import ui_device as ui
 import users as User
 
 
@@ -31,57 +30,24 @@ def Reservierung():
     
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
+    tab1, tab2, tab3 = st.tabs(["Nutzerliste", "Nutzer hinzufügen", "Nutzer löschen"])
+    
+    if "active_tab" not in st.session_state:
+        st.session_state.active_tab = "Nutzerliste"
 
-    # Anzeige der Benutzerliste
-    st.header("Nutzerliste:")
-    try:
-        users = User.find_all()
-        if users:
-            st.dataframe(
-                [{"ID": user.id, "Name": user.name} for user in users],
-                use_container_width=True
-            )
-        else:
-            st.info("Keine Benutzer gefunden.")
-    except Exception as e:
-        st.error(f"Fehler beim Abrufen der Benutzerliste: {e}")
+    with tab1:
+        User.list_users()  # Funktion zum Anzeigen der Nutzerliste
 
-    # Benutzer hinzufügen
-    st.header("Nutzer hinzufügen")
-    user_id = st.text_input("Benutzer-ID")
-    user_name = st.text_input("Benutzername")
-    if st.button("Benutzer speichern"):
-        if user_id and user_name:
-            try:
-                user = User(user_id, user_name)
-                existing_user = User.find_by_attribute("id", user_id)
-                if existing_user:
-                    st.warning(f"Benutzer mit ID {user_id} existiert bereits. Er wird aktualisiert.")
-                user.store_data()
-                st.success(f"Benutzer {user_name} (ID: {user_id}) wurde hinzugefügt/aktualisiert!")
-                st.experimental_rerun()  # Seite aktualisieren
-            except Exception as e:
-                st.error(f"Fehler beim Speichern des Benutzers: {e}")
-        else:
-            st.error("Bitte sowohl eine ID als auch einen Namen eingeben.")
+        # Button hinzufügen, um die Anwendung neu zu laden
+        if st.button("Anwendung neu laden"):
+            st.markdown('<meta http-equiv="refresh" content="0; url=/" />', unsafe_allow_html=True)
 
-    # Benutzer löschen
-    st.header("Benutzer löschen")
-    del_user_id = st.text_input("ID des zu löschenden Benutzers")
-    if st.button("Benutzer löschen"):
-        if del_user_id:
-            try:
-                user = User(del_user_id, "")
-                if not User.find_by_attribute("id", del_user_id):
-                    st.warning(f"Benutzer mit ID {del_user_id} wurde nicht gefunden.")
-                else:
-                    user.delete()
-                    st.success(f"Benutzer mit ID {del_user_id} wurde gelöscht!")
-                    st.experimental_rerun()  # Seite aktualisieren
-            except Exception as e:
-                st.error(f"Fehler beim Löschen des Benutzers: {e}")
-        else:
-            st.error("Bitte eine Benutzer-ID eingeben.")
+    with tab2:
+        User.add_user()  # Funktion zum Hinzufügen von Nutzern
+
+    with tab3:
+        User.delete_user()  # Funktion zum Löschen von Nutzern
+
 
 
 def geraeteverwaltung():
