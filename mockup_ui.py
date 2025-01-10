@@ -31,76 +31,81 @@ def Reservierung():
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
     tab1, tab2, tab3 = st.tabs(["Nutzerliste", "Nutzer hinzufügen", "Nutzer löschen"])
-    
+
     if "active_tab" not in st.session_state:
         st.session_state.active_tab = "Nutzerliste"
 
     with tab1:
-        User.list_users()  # Funktion zum Anzeigen der Nutzerliste
+        User.list_users()
 
-        # Button hinzufügen, um die Anwendung neu zu laden
         if st.button("Anwendung neu laden"):
             st.markdown('<meta http-equiv="refresh" content="0; url=/" />', unsafe_allow_html=True)
 
     with tab2:
-        User.add_user()  # Funktion zum Hinzufügen von Nutzern
+        User.add_user()
 
     with tab3:
-        User.delete_user()  # Funktion zum Löschen von Nutzern
-
-
+        User.delete_user()
 
 def geraeteverwaltung():
     st.title("Geräteverwaltung")
+    tab1, tab2, tab3 = st.tabs(["Geräte anzeigen", "Gerät hinzufügen", "Gerät bearbeiten"])
 
-    # Session State initialisieren
     if "devices" not in st.session_state:
-        st.session_state["devices"] = []  # Liste der Geräte aus der Datenbank
+        st.session_state["devices"] = []
 
-    # Datenbank-Verbindung initialisieren und Geräte aus der Datenbank laden
-    st.session_state["devices"] = Device.find_all()
+    if not st.session_state["devices"]:
+        st.session_state["devices"] = Device.find_all()
 
-    # Dropdown-Menü für Aktionen
-    option = st.selectbox(
-        "Wähle eine Aktion",
-        ["Gerät hinzufügen", "Geräte anzeigen", "Gerät bearbeiten"]
-    )
+    with tab1:
+        st.header("Geräte anzeigen")
+        if st.session_state["devices"]:
+            for device in st.session_state["devices"]:
+                st.write(f"ID: {device.device_name}, Verantwortlicher: {device.managed_by_user_id}")
+        else:
+            st.info("Es sind keine Geräte in der Datenbank gespeichert.")
 
-    # Gerät hinzufügen
-    if option == "Gerät hinzufügen":
+        if st.button("Geräteliste neu laden"):
+            st.session_state["devices"] = Device.find_all()
+            st.experimental_rerun()
+
+    with tab2:
         st.header("Gerät hinzufügen")
         device_name = st.text_input("Gerätename", key="add_device_name")
         managed_by_user_id = st.text_input("Verantwortlicher Benutzer (ID)", key="add_managed_by_user_id")
 
         if st.button("Gerät speichern"):
             if device_name and managed_by_user_id:
-                # Neues Gerät erstellen
                 new_device = Device(device_name=device_name, managed_by_user_id=managed_by_user_id)
-                
-                # Gerät in die Datenbank speichern
                 new_device.store_data()
-
-                st.success(f"Gerät '{device_name}' wurde in der Datenbank gespeichert!")
+                st.success(f"Gerät '{device_name}' wurde erfolgreich hinzugefügt!")
+                st.session_state["devices"] = Device.find_all()
             else:
                 st.error("Bitte sowohl Gerätename als auch Benutzer-ID ausfüllen.")
 
-    # Geräte anzeigen
-    elif option == "Geräte anzeigen":
-        st.header("Geräte anzeigen")
-        if st.session_state["devices"]:
-            # Alle gespeicherten Geräte aus der Datenbank anzeigen
-            for device in st.session_state["devices"]:
-                st.write(f"ID: {device.device_name}, Verantwortlicher: {device.managed_by_user_id}")
-        else:
-            st.info("Es sind keine Geräte in der Datenbank gespeichert.")
-
-    elif option == "Gerät bearbeiten":
+    with tab3:
         st.header("Gerät bearbeiten")
-        st.write("Hier kannst du ein vorhandenes Gerät bearbeiten.")
-        # Beispiel für Bearbeitungslogik
-        device_name = st.text_input("Gerätename zum Bearbeiten")
-        if st.button("Gerät bearbeiten"):
-            st.info(f"Gerät mit Name {device_name} wurde zur Bearbeitung geöffnet.")
+        st.write("Wähle ein Gerät zum Bearbeiten aus der Liste aus.")
+
+        device_names = [device.device_name for device in st.session_state["devices"]]
+        selected_device = st.selectbox("Gerät auswählen", ["---"] + device_names)
+
+        if selected_device != "---":
+            new_name = st.text_input("Neuer Gerätename", value=selected_device)
+            new_managed_by_user_id = st.text_input("Neue Benutzer-ID")
+
+            if st.button("Gerät aktualisieren"):
+                for device in st.session_state["devices"]:
+                    if device.device_name == selected_device:
+                        device.device_name = new_name
+                        if new_managed_by_user_id:
+                            device.managed_by_user_id = new_managed_by_user_id
+
+                        device.update_data()
+                        st.success(f"Gerät '{selected_device}' wurde erfolgreich aktualisiert!")
+                        st.session_state["devices"] = Device.find_all()
+                        break
+
 
         
 def geraetewartung():
