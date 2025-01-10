@@ -67,7 +67,7 @@ def geraeteverwaltung():
 
         if st.button("Geräteliste neu laden"):
             st.session_state["devices"] = Device.find_all()
-            st.experimental_rerun()
+            st.rerun()
 
     with tab2:
         st.header("Gerät hinzufügen")
@@ -79,30 +79,24 @@ def geraeteverwaltung():
                 new_device = Device(device_name=device_name, managed_by_user_id=managed_by_user_id)
                 new_device.store_data()
                 st.success(f"Gerät '{device_name}' wurde erfolgreich hinzugefügt!")
+
                 st.session_state["devices"] = Device.find_all()
             else:
                 st.error("Bitte sowohl Gerätename als auch Benutzer-ID ausfüllen.")
 
     with tab3:
-        st.header("Gerät bearbeiten")
-        st.write("Wähle ein Gerät zum Bearbeiten aus der Liste aus.")
+        st.header("Gerät löschen")
+        st.write("Wähle ein Gerät zum Löschen aus der Liste aus.")
 
         device_names = [device.device_name for device in st.session_state["devices"]]
         selected_device = st.selectbox("Gerät auswählen", ["---"] + device_names)
 
         if selected_device != "---":
-            new_name = st.text_input("Neuer Gerätename", value=selected_device)
-            new_managed_by_user_id = st.text_input("Neue Benutzer-ID")
-
-            if st.button("Gerät aktualisieren"):
+            if st.button("Gerät löschen"):
                 for device in st.session_state["devices"]:
                     if device.device_name == selected_device:
-                        device.device_name = new_name
-                        if new_managed_by_user_id:
-                            device.managed_by_user_id = new_managed_by_user_id
-
-                        device.update_data()
-                        st.success(f"Gerät '{selected_device}' wurde erfolgreich aktualisiert!")
+                        device.delete()  # Gerät aus der Datenbank löschen
+                        st.success(f"Gerät '{selected_device}' wurde erfolgreich gelöscht!")
                         st.session_state["devices"] = Device.find_all()
                         break
 
