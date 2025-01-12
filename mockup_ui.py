@@ -85,20 +85,37 @@ def geraeteverwaltung():
                 st.error("Bitte sowohl Gerätename als auch Benutzer-ID ausfüllen.")
 
     with tab3:
-        st.header("Gerät löschen")
-        st.write("Wähle ein Gerät zum Löschen aus der Liste aus.")
+        st.header("Gerät bearbeiten oder löschen")
+        st.write("Wähle ein Gerät aus der Liste aus.")
 
         device_names = [device.device_name for device in st.session_state["devices"]]
         selected_device = st.selectbox("Gerät auswählen", ["---"] + device_names)
 
         if selected_device != "---":
+            selected_device_obj = next(device for device in st.session_state["devices"] if device.device_name == selected_device)
+
+            st.subheader("Gerät bearbeiten")
+            new_device_name = st.text_input("Neuer Gerätename", value=selected_device_obj.device_name, key="edit_device_name")
+            new_managed_by_user_id = st.text_input("Neue Benutzer-ID", value=selected_device_obj.managed_by_user_id, key="edit_managed_by_user_id")
+
+            if st.button("Änderungen speichern"):
+                if new_device_name and new_managed_by_user_id:
+                    selected_device_obj.device_name = new_device_name
+                    selected_device_obj.managed_by_user_id = new_managed_by_user_id
+                    selected_device_obj.store_data()
+                    st.success(f"Gerät '{new_device_name}' wurde erfolgreich aktualisiert!")
+
+                    st.session_state["devices"] = Device.find_all()
+                    st.rerun()
+                else:
+                    st.error("Bitte sowohl neuen Gerätenamen als auch Benutzer-ID ausfüllen.")
+
+            st.subheader("Gerät löschen")
             if st.button("Gerät löschen"):
-                for device in st.session_state["devices"]:
-                    if device.device_name == selected_device:
-                        device.delete()  # Gerät aus der Datenbank löschen
-                        st.success(f"Gerät '{selected_device}' wurde erfolgreich gelöscht!")
-                        st.session_state["devices"] = Device.find_all()
-                        break
+                selected_device_obj.delete()
+                st.success(f"Gerät '{selected_device}' wurde erfolgreich gelöscht!")
+                st.session_state["devices"] = Device.find_all()
+                st.rerun()
 
 
         
