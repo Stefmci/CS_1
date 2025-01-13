@@ -39,13 +39,13 @@ def benutzerverwaltung():
         User.list_users()
 
         if st.button("Anwendung neu laden"):
-            st.markdown('<meta http-equiv="refresh" content="0; url=/" />', unsafe_allow_html=True)
-
+            st.rerun()
     with tab2:
         User.add_user()
 
     with tab3:
         User.delete_user()
+
 
 def geraeteverwaltung():
     st.title("Geräteverwaltung")

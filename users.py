@@ -8,19 +8,20 @@ import database as datab
 class User:
     db_connector = TinyDB(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.json'), storage=serializer).table('users')
 
-    def __init__(self, id, name) -> None:
+    def __init__(self,intern_id, id, name) -> None:
+        self.intern_id = intern_id
         self.name = name
         self.id = id
 
     def store_data(self):
         try:
-            User.db_connector.upsert({"id": self.id, "name": self.name}, Query().id == self.id)
+            User.db_connector.upsert({"intern_id": self.intern_id, "id": self.id, "name": self.name}, Query().id == self.id)
         except Exception as e:
             raise Exception(f"Fehler beim Speichern des Benutzers: {e}")
 
     def delete(self):
         try:
-            User.db_connector.remove(Query().id == self.id)
+            User.db_connector.remove(Query().intern_id == self.intern_id)
         except Exception as e:
             raise Exception(f"Fehler beim Löschen des Benutzers: {e}")
 
@@ -34,7 +35,7 @@ class User:
     def find_all(cls) -> list:
         users = []
         for user_data in cls.db_connector.all():
-            users.append(cls(user_data['id'], user_data['name']))
+            users.append(cls(user_data['intern_id'],user_data['id'], user_data['name']))
         return users
 
     @classmethod
@@ -44,7 +45,7 @@ class User:
 
         if result:
             data = result[:num_to_return]
-            user_results = [cls(d['id'], d['name']) for d in data]
+            user_results = [cls(d['intern_id'],d['id'], d['name']) for d in data]
             return user_results if num_to_return > 1 else user_results[0]
         else:
             return None
@@ -56,7 +57,7 @@ def list_users():
         users = User.find_all()
         if users:
             st.dataframe(
-                [{"ID": user.id, "Name": user.name} for user in users],
+                [{"ID": user.intern_id, "Name": user.name, "E-Mail" : user.id} for user in users],
                 use_container_width=True
             )
         else:
@@ -69,11 +70,11 @@ def add_user():
     st.header("Nutzer hinzufügen")
     user_name = st.text_input("Benutzername")
     user_id = st.text_input("E-Mail-Adresse")
+    user_intern_id = generate_user_id()
     if st.button("Benutzer speichern"):
         if user_name:
             try:
-                user_id = str(datab.generate_user_id())  # ID als String sicherstellen
-                user = User(user_id, user_name)
+                user = User(user_intern_id, user_id, user_name)
                 user.store_data()
                 st.success(f"Benutzer {user_name} (ID: {user_id}) wurde hinzugefügt!")
             except Exception as e:
@@ -99,5 +100,14 @@ def delete_user():
         else:
             st.error("Bitte eine Benutzer-ID eingeben.")
 
-
-
+def generate_user_id():
+    try:
+        db = TinyDB(Database.DB_FILE).table("user_ids")
+        if not db.contains(Query().type == "user_ids"):
+            db.insert({"type": "user_ids", "current_id": 0})
+        user_id_entry = db.get(Query().type == "user_ids")
+        new_id = user_id_entry["current_id"] + 1
+        db.update({"current_id": new_id}, Query().type == "user_ids")
+        return new_id
+    except Exception as e:
+        raise Exception(f"Fehler beim Generieren der Benutzer-ID: {e}")
