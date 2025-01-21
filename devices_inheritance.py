@@ -10,8 +10,6 @@ class Device(Serializable):
 
     def __init__(self, id: str, managed_by_user_id: str, end_of_life: datetime = None, creation_date: datetime = None, last_update: datetime = None):
         super().__init__(id, creation_date, last_update)
-        # The user id of the user that manages the device
-        # We don't store the user object itself, but only the id (as a key)
         self.managed_by_user_id = managed_by_user_id
         self.is_active = True
         self.end_of_life = end_of_life if end_of_life else datetime.today().date()
@@ -28,7 +26,6 @@ class Device(Serializable):
         self.managed_by_user_id = managed_by_user_id
 
 if __name__ == "__main__":
-    # Create a device
     device1 = Device("Device1", "one@mci.edu")
     device2 = Device("Device2", "two@mci.edu") 
     device3 = Device("Device3", "two@mci.edu") 

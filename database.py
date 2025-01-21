@@ -1,23 +1,65 @@
-from tinydb import TinyDB, Query
+import os
+from tinydb import TinyDB
+from tinydb.table import Table
+from tinydb.storages import JSONStorage
+from datetime import datetime, date, time
+from tinydb_serialization import Serializer, SerializationMiddleware
+from tinydb_serialization.serializers import DateTimeSerializer
 
-class Database:
-    DB_FILE = "database.json"
+class DatabaseConnector:
+    """
+    Usage: DatabaseConnector().get_table(<table_name>)
+    The information about the actual database file path and the serializer objects has been abstracted away into this class
+    """
+    # Turns the class into a naive singleton
+    # --> not thread safe and doesn't handle inheritance particularly well
+    __instance = None
+    def __new__(cls):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+            cls.__instance.path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.json')
 
-    def __init__(self):
-        self.db = TinyDB(self.DB_FILE)
+        return cls.__instance
+    
+    def get_table(self, table_name: str) -> Table:
+        return TinyDB(self.__instance.path, storage=serializer).table(table_name)
 
-    def get_table(self, table_name: str):
-        return self.db.table(table_name)
+#%%
 
-    def close(self):
-        self.db.close()
+class DateSerializer(Serializer):
+    # The class this serializer handles --> must be date instead of datetime.date
+    OBJ_CLASS = date
+
+    def encode(self, obj):
+        return obj.isoformat()
+
+    def decode(self, s):
+        return date.fromisoformat(s)
+
+class TimeSerializer(Serializer):
+    # The class this serializer handles --> must be time instead of datetime.time
+    OBJ_CLASS = time
+    
+    def encode(self, obj):
+        return obj.isoformat()
+
+    def decode(self, s):
+        return time.fromisoformat(s)
+
+serializer = SerializationMiddleware(JSONStorage)
+serializer.register_serializer(DateTimeSerializer(), 'TinyDateTime')
+serializer.register_serializer(DateSerializer(), 'TinyDate')
+serializer.register_serializer(TimeSerializer(), 'TinyTime')
 
 
-def generate_user_id():
-    db = TinyDB(Database.DB_FILE).table("user_ids")
-    if not db.contains(Query().type == "user_ids"):
-        db.insert({"type": "user_ids", "current_id": 0})
-    user_id_entry = db.get(Query().type == "user_ids")
-    new_id = user_id_entry["current_id"] + 1
-    db.update({"current_id": new_id}, Query().type == "user_ids")
-    return new_id
+#%%
+
+if __name__ == "__main__":
+    db_connector = DatabaseConnector().get_table('devices')
+    result = db_connector.all()
+
+    if result:
+        result = [x["device_name"] for x in result]
+    
+    print(result)
+    
