@@ -2,8 +2,10 @@ import streamlit as st
 from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 import general_data as bu
-from devices import Device
-import users as User
+from devices_inheritance import Device
+import users_inheritance as User
+import reservations as r
+import reservation_service as rs
 
 
 def startseite():
@@ -30,21 +32,56 @@ def Reservierung():
     
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
+    
     tab1, tab2, tab3 = st.tabs(["Nutzerliste", "Nutzer hinzufügen", "Nutzer löschen"])
 
-    if "active_tab" not in st.session_state:
-        st.session_state.active_tab = "Nutzerliste"
-
     with tab1:
-        User.list_users()
+        st.header("Nutzerliste")
+        users = User.find_all()
 
-        if st.button("Anwendung neu laden"):
+        if users:
+            for user in users:
+                st.write(f"ID: {user.id}, Name: {user.name}, Erstellt: {user.creation_date}, Letzte Aktualisierung: {user.last_update}")
+        else:
+            st.info("Keine Nutzer gefunden.")
+
+        if st.button("Liste aktualisieren"):
             st.rerun()
+
     with tab2:
-        User.add_user()
+        st.header("Nutzer hinzufügen")
+        user_id = st.text_input("E-Mail-Adresse (ID)")
+        user_name = st.text_input("Name des Nutzers")
+
+        if st.button("Nutzer speichern"):
+            if user_id and user_name:
+                new_user = User(id=user_id, name=user_name)
+                new_user.store_data()
+                st.success(f"Nutzer {user_name} wurde erfolgreich hinzugefügt!")
+                st.rerun()
+            else:
+                st.error("Bitte alle Felder ausfüllen.")
 
     with tab3:
-        User.delete_user()
+        st.header("Nutzer löschen")
+        users = User.find_all()
+
+        if users:
+            user_ids = [user.id for user in users]
+            selected_user = st.selectbox("Nutzer auswählen", ["---"] + user_ids)
+
+            if selected_user != "---":
+                user_to_delete = next((user for user in users if user.id == selected_user), None)
+
+                if st.button("Nutzer löschen"):
+                    if user_to_delete:
+                        user_to_delete.delete()
+                        st.success(f"Nutzer {user_to_delete.name} wurde erfolgreich gelöscht!")
+                        st.rerun()
+                    else:
+                        st.error("Nutzer konnte nicht gefunden werden.")
+        else:
+            st.info("Keine Nutzer verfügbar zum Löschen.")
 
 
 def geraeteverwaltung():
