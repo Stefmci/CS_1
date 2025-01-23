@@ -1,6 +1,5 @@
 from typing import Self
 from datetime import datetime
-
 from serializable import Serializable
 from database import DatabaseConnector
 
@@ -24,23 +23,3 @@ class Device(Serializable):
     def set_managed_by_user_id(self, managed_by_user_id: str):
         """Expects `managed_by_user_id` to be a valid user id that exists in the database."""
         self.managed_by_user_id = managed_by_user_id
-
-if __name__ == "__main__":
-    device1 = Device("Device1", "one@mci.edu")
-    device2 = Device("Device2", "two@mci.edu") 
-    device3 = Device("Device3", "two@mci.edu") 
-    device1.store_data()
-    device2.store_data()
-    device3.store_data()
-    device4 = Device("Device3", "four@mci.edu") 
-    device4.store_data()
-    
-    loaded_device = Device.find_by_attribute("id", "Device2")
-    if loaded_device:
-        print(f"Loaded: {loaded_device}")
-    else:
-        print("Device not found.")
-
-    all_devices = Device.find_all()
-    for device in all_devices:
-        print(device)

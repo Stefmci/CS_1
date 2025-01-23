@@ -3,52 +3,52 @@
         "1": {
             "id": "one@mci.edu",
             "name": "User One",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:41:00.551358",
-            "last_update": "{TinyDateTime}:2025-01-13T13:41:00.551358"
+            "creation_date": "{TinyDateTime}:2025-01-21T09:42:50.679028",
+            "last_update": "{TinyDateTime}:2025-01-21T09:42:50.679048"
         },
         "2": {
             "id": "two@mci.edu",
             "name": "User Two",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:41:00.551358",
-            "last_update": "{TinyDateTime}:2025-01-13T13:41:00.551358"
+            "creation_date": "{TinyDateTime}:2025-01-21T09:42:50.679054",
+            "last_update": "{TinyDateTime}:2025-01-21T09:42:50.679055"
         },
         "3": {
             "id": "three@mci.edu",
             "name": "User Three",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:41:00.551358",
-            "last_update": "{TinyDateTime}:2025-01-13T13:41:00.551358"
+            "creation_date": "{TinyDateTime}:2025-01-21T09:42:50.679056",
+            "last_update": "{TinyDateTime}:2025-01-21T09:42:50.679056"
         },
         "4": {
             "id": "User Four",
             "name": "four@mci.edu",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:41:00.567350",
-            "last_update": "{TinyDateTime}:2025-01-13T13:41:00.567350"
+            "creation_date": "{TinyDateTime}:2025-01-21T09:42:50.697480",
+            "last_update": "{TinyDateTime}:2025-01-21T09:42:50.697481"
         }
     },
     "devices": {
         "1": {
             "id": "Device1",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:40:48.411646",
-            "last_update": "{TinyDateTime}:2025-01-13T13:40:48.411646",
+            "creation_date": "{TinyDateTime}:2025-01-21T09:43:50.082605",
+            "last_update": "{TinyDateTime}:2025-01-21T09:43:50.082628",
             "managed_by_user_id": "one@mci.edu",
             "is_active": true,
-            "end_of_life": "{TinyDate}:2025-01-13"
+            "end_of_life": "{TinyDate}:2025-01-21"
         },
         "2": {
             "id": "Device2",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:40:48.411646",
-            "last_update": "{TinyDateTime}:2025-01-13T13:40:48.411646",
+            "creation_date": "{TinyDateTime}:2025-01-21T09:43:50.082653",
+            "last_update": "{TinyDateTime}:2025-01-21T09:43:50.082654",
             "managed_by_user_id": "two@mci.edu",
             "is_active": true,
-            "end_of_life": "{TinyDate}:2025-01-13"
+            "end_of_life": "{TinyDate}:2025-01-21"
         },
         "3": {
             "id": "Device3",
-            "creation_date": "{TinyDateTime}:2025-01-13T13:40:48.427647",
-            "last_update": "{TinyDateTime}:2025-01-13T13:40:48.427647",
+            "creation_date": "{TinyDateTime}:2025-01-21T09:43:50.100503",
+            "last_update": "{TinyDateTime}:2025-01-21T09:43:50.100506",
             "managed_by_user_id": "four@mci.edu",
             "is_active": true,
-            "end_of_life": "{TinyDate}:2025-01-13"
+            "end_of_life": "{TinyDate}:2025-01-21"
         }
     },
     "reservations": {

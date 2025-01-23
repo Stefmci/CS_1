@@ -7,7 +7,7 @@ import sys
 sys.path.append('src')
 
 # import the geometries module
-from devices import Device
+import devices_inheritance as Device
 
 class TestDeviceLifeCycle(unittest.TestCase):
     

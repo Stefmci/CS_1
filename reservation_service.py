@@ -51,7 +51,6 @@ class ReservationService():
 
 
 if __name__ == "__main__":
-    # Create a device
     reservation_service = ReservationService()
     print(reservation_service.find_all_reservations())
     #print(reservation_service.create_reservation("2", "Device2", "2021-01-01 00:00:00", "2021-01-02 00:00:00"))
