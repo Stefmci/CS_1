@@ -2,8 +2,10 @@ import streamlit as st
 from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 import general_data as bu
-from devices import Device
-import users as User
+from devices_inheritance import Device
+from users_inheritance import User
+import reservations as r
+import reservation_service as rs
 
 
 def startseite():
@@ -30,21 +32,56 @@ def Reservierung():
     
 def benutzerverwaltung():
     st.title("Nutzerverwaltung")
+    
     tab1, tab2, tab3 = st.tabs(["Nutzerliste", "Nutzer hinzufügen", "Nutzer löschen"])
 
-    if "active_tab" not in st.session_state:
-        st.session_state.active_tab = "Nutzerliste"
-
     with tab1:
-        User.list_users()
+        st.header("Nutzerliste")
+        users = User.find_all()
 
-        if st.button("Anwendung neu laden"):
+        if users:
+            for user in users:
+                st.write(f"ID: {user.id}, Name: {user.name}, Erstellt: {user.creation_date}, Letzte Aktualisierung: {user.last_update}")
+        else:
+            st.info("Keine Nutzer gefunden.")
+
+        if st.button("Liste aktualisieren"):
             st.rerun()
+
     with tab2:
-        User.add_user()
+        st.header("Nutzer hinzufügen")
+        user_id = st.text_input("E-Mail-Adresse (ID)")
+        user_name = st.text_input("Name des Nutzers")
+
+        if st.button("Nutzer speichern"):
+            if user_id and user_name:
+                new_user = User(id=user_id, name=user_name)
+                new_user.store_data()
+                st.success(f"Nutzer {user_name} wurde erfolgreich hinzugefügt!")
+                st.rerun()
+            else:
+                st.error("Bitte alle Felder ausfüllen.")
 
     with tab3:
-        User.delete_user()
+        st.header("Nutzer löschen")
+        users = User.find_all()
+
+        if users:
+            user_ids = [user.id for user in users]
+            selected_user = st.selectbox("Nutzer auswählen", ["---"] + user_ids)
+
+            if selected_user != "---":
+                user_to_delete = next((user for user in users if user.id == selected_user), None)
+
+                if st.button("Nutzer löschen"):
+                    if user_to_delete:
+                        user_to_delete.delete()
+                        st.success(f"Nutzer {user_to_delete.name} wurde erfolgreich gelöscht!")
+                        st.rerun()
+                    else:
+                        st.error("Nutzer konnte nicht gefunden werden.")
+        else:
+            st.info("Keine Nutzer verfügbar zum Löschen.")
 
 
 def geraeteverwaltung():
@@ -61,7 +98,7 @@ def geraeteverwaltung():
         st.header("Geräte anzeigen")
         if st.session_state["devices"]:
             for device in st.session_state["devices"]:
-                st.write(f"ID: {device.device_name}, Verantwortlicher: {device.managed_by_user_id}")
+                st.write(f"ID: {device.id}, Verantwortlicher: {device.managed_by_user_id}")
         else:
             st.info("Es sind keine Geräte in der Datenbank gespeichert.")
 
@@ -71,14 +108,14 @@ def geraeteverwaltung():
 
     with tab2:
         st.header("Gerät hinzufügen")
-        device_name = st.text_input("Gerätename", key="add_device_name")
+        id = st.text_input("Gerätename", key="add_device_name")
         managed_by_user_id = st.text_input("Verantwortlicher Benutzer (ID)", key="add_managed_by_user_id")
 
         if st.button("Gerät speichern"):
-            if device_name and managed_by_user_id:
-                new_device = Device(device_name=device_name, managed_by_user_id=managed_by_user_id)
+            if id and managed_by_user_id:
+                new_device = Device(id=id, managed_by_user_id=managed_by_user_id)
                 new_device.store_data()
-                st.success(f"Gerät '{device_name}' wurde erfolgreich hinzugefügt!")
+                st.success(f"Gerät '{id}' wurde erfolgreich hinzugefügt!")
 
                 st.session_state["devices"] = Device.find_all()
             else:
@@ -88,19 +125,19 @@ def geraeteverwaltung():
         st.header("Gerät bearbeiten oder löschen")
         st.write("Wähle ein Gerät aus der Liste aus.")
 
-        device_names = [device.device_name for device in st.session_state["devices"]]
+        device_names = [device.id for device in st.session_state["devices"]]
         selected_device = st.selectbox("Gerät auswählen", ["---"] + device_names)
 
         if selected_device != "---":
-            selected_device_obj = next(device for device in st.session_state["devices"] if device.device_name == selected_device)
+            selected_device_obj = next(device for device in st.session_state["devices"] if device.id == selected_device)
 
             st.subheader("Gerät bearbeiten")
-            new_device_name = st.text_input("Neuer Gerätename", value=selected_device_obj.device_name, key="edit_device_name")
+            new_device_name = st.text_input("Neuer Gerätename", value=selected_device_obj.id, key="edit_device_name")
             new_managed_by_user_id = st.text_input("Neue Benutzer-ID", value=selected_device_obj.managed_by_user_id, key="edit_managed_by_user_id")
 
             if st.button("Änderungen speichern"):
                 if new_device_name and new_managed_by_user_id:
-                    selected_device_obj.device_name = new_device_name
+                    selected_device_obj.id = new_device_name
                     selected_device_obj.managed_by_user_id = new_managed_by_user_id
                     selected_device_obj.store_data()
                     st.success(f"Gerät '{new_device_name}' wurde erfolgreich aktualisiert!")

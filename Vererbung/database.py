@@ -56,13 +56,10 @@ serializer.register_serializer(TimeSerializer(), 'TinyTime')
 
 if __name__ == "__main__":
     db_connector = DatabaseConnector().get_table('devices')
-    try:
-        result = db_connector.all()
+    result = db_connector.all()
 
-        if result:
-            result = [x for x in result]
-            print("Loaded devices:", result)
-        else:
-            print("No devices found.")
-    except Exception as e:
-        print("Error while accessing the database:", e)
+    if result:
+        result = [x["device_name"] for x in result]
+    
+    print(result)
+    
