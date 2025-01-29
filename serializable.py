@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from tinydb import Query
 from typing import Self
+from datetime import datetime, timedelta
 
 class Serializable(ABC):
     db_connector =  None
